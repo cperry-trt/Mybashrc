@@ -1,0 +1,53 @@
+#!/bin/bash
+
+cat << 'EOT' >> /root/.bashrc
+
+#My aliases:
+    alias ll='ls -alF'
+    alias vim='vim +star'
+    alias pingg='ping -c 4 google.co.uk'
+    alias bashed='vim ~/.bashrc'
+    alias sup='source ~/.bashrc'
+    alias vi='vim'
+    alias new='/bin/bash /bin/scripts/newdoc'
+    alias newdoc='vim /bin/scripts/newdoc'
+    alias desktop='cd /home/$USER/Desktop'
+    alias nterm='sudo -H gnome-terminal'
+    alias testing='ll /home/chris/Desktop'
+EOT
+
+sleep 5
+
+source ~/.bashrc
+
+mkdir /bin/scripts
+cat << 'EOT' >> /bin/scripts/newdoc
+!/bin/bash
+
+name="$(zenity --title="Document name" --entry --text="Please give the document a name: ")"
+path=$(pwd)
+date=$(date +"%H:%M : %d/%m/%Y")
+echo"" > $name
+cat > $name <<EOL
+#!/bin/bash
+#.................................................................#
+#Time and date: $date
+#Document location: ${path}/${name}
+#Last edited: 
+#.................................................................#
+
+EOL
+		
+chmod +x $name
+
+vim +star '+normal Go' $name
+
+zenity --title="Run?" --question --text="Do you want to run $name?"
+
+if [ $? = 0 ] ; then
+	source ${path}/$name
+else
+	echo "File name is $name"
+
+fi
+EOT
